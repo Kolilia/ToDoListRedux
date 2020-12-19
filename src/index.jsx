@@ -3,7 +3,7 @@ import { create } from "jss";
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import { Router } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { applyMiddleware, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
 import App from "./components/App";
@@ -21,15 +21,15 @@ const store = createStore(allReducers, applyMiddleware(sagaMiddleware));
 
 render(
   <Router>
-    <Provider store={store}>
-      <StylesProvider jss={jss}>
-        <ThemeProvider theme={theme}>
+    <StylesProvider jss={jss}>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
           <ErrorHandler>
             <App />
           </ErrorHandler>
-        </ThemeProvider>
-      </StylesProvider>
-    </Provider>
+        </Provider>
+      </ThemeProvider>
+    </StylesProvider>
   </Router>,
   document.getElementById("root")
 );
