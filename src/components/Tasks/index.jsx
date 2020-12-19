@@ -14,6 +14,7 @@ import { Add, Check, Delete } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import AddTask from "./Actions/AddTask";
 
 const useStyles = makeStyles({
   actions: {
@@ -55,6 +56,8 @@ const Tasks = () => {
   const history = useHistory();
   const [filter, setFilter] = useState("All");
   const [tasksItems, setTaskItems] = useState([]);
+  const [openAdd, setOpenAdd] = useState(false);
+
   const loading = useSelector((state) => state.tasks.loading);
   const intermediateData = useSelector((state) => state.tasks.items);
   const dispatch = useDispatch();
@@ -74,10 +77,10 @@ const Tasks = () => {
       history.push(`/${item?.id}`);
     }
 
-    function completeTask(event) {
+    const completeTask = (event) => {
       event.stopPropagation();
       dispatch({ type: "CHANGE_TASK", payload: { ...item, completed: true } });
-    }
+    };
 
     return (
       <ListItem
@@ -113,7 +116,7 @@ const Tasks = () => {
 
   /* Если бы был нормальный бэкенд(а не mockapi), то резализация фильтров была бы сделана через бэкенд(агригацией данных должен заниматься бэкенд) и тогда бы мне не пришлось делать промежуточное хранилище */
 
-  function onChangeFilter(event) {
+  const onChangeFilter = (event) => {
     const { value } = event.target;
 
     const element = document.getElementById("list_tasks");
@@ -123,6 +126,7 @@ const Tasks = () => {
     if (value === "All") {
       newState = intermediateData;
     }
+
     if (value === "Completed") {
       newState = intermediateData.filter((item) => item?.completed);
     }
@@ -134,17 +138,23 @@ const Tasks = () => {
     element.scrollTo(0, 0);
     setFilter(value);
     setTaskItems(newState);
-  }
+  };
+
+  const openDialogAdd = () => {
+    setOpenAdd(true);
+  };
 
   return (
     <div>
       <h1 className={classes.title}>TODO List</h1>
+
       <div className={classes.actions}>
         <div>
-          <IconButton>
+          <IconButton onClick={openDialogAdd}>
             <Add />
           </IconButton>
         </div>
+
         <div>
           <TextField
             label="Фильтр"
@@ -177,6 +187,8 @@ const Tasks = () => {
       <div id="list_tasks" className={classes.list}>
         <List>{listItems}</List>
       </div>
+
+      {openAdd && <AddTask open={openAdd} setOpen={setOpenAdd} />}
     </div>
   );
 };
